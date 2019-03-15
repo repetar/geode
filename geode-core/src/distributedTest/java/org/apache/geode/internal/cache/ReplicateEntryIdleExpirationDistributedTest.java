@@ -224,4 +224,19 @@ public class ReplicateEntryIdleExpirationDistributedTest implements Serializable
     factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(100));
     factory.create(regionName);
   }
+
+  @Test
+  public void testAEQIdShouldBeTheSameForReplicatedRegionInAllMembers() {
+    member1.invoke(() -> {
+      RegionFactory<String, String> factory = cacheRule.getCache().createRegionFactory(REPLICATE);
+      factory.addAsyncEventQueueId("aeq1");
+      factory.create("ReplicateRegionWithAEQ");
+    });
+
+    member2.invoke(() -> {
+      RegionFactory<String, String> factory = cacheRule.getCache().createRegionFactory(REPLICATE);
+      factory.addAsyncEventQueueId("aeq2");
+      factory.create("ReplicateRegionWithAEQ");
+    });
+  }
 }
